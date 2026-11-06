@@ -28,3 +28,4 @@ RUN mkdir -p data capturas logs .browser_profile
 # Comando por defecto: ejecutar una pasada del tracker
 ENTRYPOINT ["python", "main.py"]
 CMD ["run"]
+

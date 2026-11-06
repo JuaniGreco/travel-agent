@@ -18,3 +18,4 @@ services:
       - ./.browser_profile:/app/.browser_profile
     # Permite pasar argumentos al entrypoint, ej: docker compose run --rm travel-agent run --only avis_suv
     restart: "no"
+

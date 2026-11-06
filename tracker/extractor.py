@@ -28,8 +28,11 @@ LABEL_KEY = re.compile(
     r"name|title|desc|room.?type|roomtype|vehicle|make|model|class|category|type|label|bed|view|group",
     re.I,
 )
-MONEY_STR = re.compile(r"^\s*(?:US)?\$?\s*(\d{1,3}(?:,\d{3})+|\d+)(\.\d{1,2})?\s*(?:USD)?\s*$", re.I)
-AMOUNT_SUBKEY = re.compile(r"^(amount|value|price|total|usd|amt)$", re.I)
+MONEY_STR = re.compile(
+    r"^\s*(?:US)?\$?\s*(\d{1,3}(?:,\d{3})+|\d+)(\.\d{1,2})?\s*(?:USD)?(?:\s*(?:total|per\s*night|\/night|\/day))?\s*$",
+    re.I,
+)
+AMOUNT_SUBKEY = re.compile(r"^(amount|value|price|total|usd|amt|raw|numeric)$", re.I)
 
 
 def _to_number(value: Any) -> Optional[float]:
@@ -38,7 +41,8 @@ def _to_number(value: Any) -> Optional[float]:
     if isinstance(value, (int, float)):
         return float(value)
     if isinstance(value, str):
-        m = MONEY_STR.match(value)
+        cleaned = value.replace("\xa0", " ").strip()
+        m = MONEY_STR.match(cleaned)
         if m:
             return float(m.group(1).replace(",", "") + (m.group(2) or ""))
     return None

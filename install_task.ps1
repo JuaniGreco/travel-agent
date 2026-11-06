@@ -43,7 +43,8 @@ $settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -WakeToRun -DontSto
     -AllowStartIfOnBatteries -ExecutionTimeLimit (New-TimeSpan -Hours 1)
 
 # Interactive: corre con la sesión del usuario iniciada (necesario para navegador visible y perfil real).
-$principal = New-ScheduledTaskPrincipal -UserId "$env:USERDOMAIN\$env:USERNAME" -LogonType Interactive
+$userId = if ($env:USERDOMAIN -and $env:USERDOMAIN -ne $env:COMPUTERNAME) { "$env:USERDOMAIN\$env:USERNAME" } else { "$env:USERNAME" }
+$principal = New-ScheduledTaskPrincipal -UserId $userId -LogonType Interactive
 
 Register-ScheduledTask -TaskName $TaskName -Action $action -Trigger $triggers `
     -Settings $settings -Principal $principal -Force | Out-Null

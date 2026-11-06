@@ -1,8 +1,14 @@
 @echo off
-REM Ejecutado por Windows Task Scheduler (ver install_task.ps1)
+setlocal
 cd /d "%~dp0"
 if not exist logs mkdir logs
-call .venv\Scripts\activate.bat
-echo ===== %date% %time% ===== >> logs\tracker.log
-python main.py run >> logs\tracker.log 2>&1
 
+if exist ".venv\Scripts\python.exe" (
+    set "PYTHON_EXE=%~dp0.venv\Scripts\python.exe"
+) else (
+    set "PYTHON_EXE=python"
+)
+
+echo ===== %date% %time% ===== >> logs\tracker.log
+"%PYTHON_EXE%" main.py run %* >> logs\tracker.log 2>&1
+endlocal

@@ -3,18 +3,35 @@
 Monitorea 2 veces por día los precios del auto (Avis) y los hoteles de Orlando, los compara contra lo ya pagado
 y escribe alertas en [`bitacora_precios.md`](bitacora_precios.md). Contexto completo y reglas: [`AGENTS.md`](AGENTS.md).
 
-## 1. Instalación y Configuración (Windows)
+## 1. Instalación Rápida en Windows 10 (1 Clic)
+Si estás en tu computadora con Windows 10, podés dejar todo listo y operativo con un solo clic:
+
+1. Cloná o descargá el repositorio:
+   ```cmd
+   git clone https://github.com/JuaniGreco/travel-agent.git
+   cd travel-agent
+   ```
+2. Hacé **doble clic en `setup_windows.bat`** (o ejecutalo desde la consola):
+   - ✅ Detecta Python 3 automáticamente.
+   - ✅ Crea el entorno virtual `.venv`.
+   - ✅ Instala todas las dependencias (`requirements.txt`).
+   - ✅ Instala Chromium para Playwright.
+   - ✅ Genera tu archivo local `.env` listo para usar.
+   - ✅ Ejecuta los 20 tests unitarios y valida la instalación.
+
+3. **Para programar la ejecución desatendida:**
+   - Hacé doble clic en **`instalar_tarea.bat`** y se registrará automáticamente en Windows Task Scheduler (cada 4 horas con jitter aleatorio).
+
+---
+
+### Instalación Manual Alternativa (PowerShell)
 ```powershell
 cd C:\ruta\travel-agent
 py -3 -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
-playwright install chromium      # respaldo si no tenés Google Chrome instalado
-
-# Crear archivo de configuración local a partir de la plantilla
+playwright install chromium
 copy .env.example .env
-# (Editar .env con tus presupuestos base y ajustes)
-
 python main.py list
 ```
 
