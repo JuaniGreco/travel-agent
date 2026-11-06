@@ -33,7 +33,7 @@ SEARCHES = {s.id: s for s in config.SEARCHES}
 def bases_by_search() -> dict[str, float | None]:
     out: dict[str, float | None] = {}
     for g in config.HOTEL_GROUPS:
-        for sid in (g.quad_search, g.double_search, g.upgrade_search):
+        for sid in (g.quad_search, g.double_search, g.upgrade_search, g.expedia_search):
             if sid:
                 out[sid] = g.base_usd
     for c in config.CAR_RULES:
@@ -70,7 +70,8 @@ def cmd_run(args) -> int:
     alerts = evaluate(results, config.HOTEL_GROUPS, config.CAR_RULES,
                       tolerance=config.TOLERANCIA_PRIVACIDAD_USD,
                       suspicious_ratio=config.UMBRAL_SOSPECHOSO,
-                      historical_min=historical_min(HISTORY))
+                      historical_min=historical_min(HISTORY),
+                      expedia_min_saving=config.EXPEDIA_MIN_AHORRO_USD)
     entry = render_entry(now, selected, results, alerts, bases_by_search())
     write_logbook(LOGBOOK, config.TRIP_NAME, entry)
     append_history(HISTORY, now, results)

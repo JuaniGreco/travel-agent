@@ -44,6 +44,7 @@ def send_discord(webhook_url: str, alerts: list[Alert], trip_name: str) -> bool:
         "PRIVACIDAD": 0x3498DB,        # Azul
         "UPGRADE": 0x9B59B6,           # Violeta
         "MÍNIMO HISTÓRICO": 0xE67E22,   # Naranja
+        "AHORRO EXPEDIA": 0x1ABC9C,    # Turquesa
     }
 
     fields = []

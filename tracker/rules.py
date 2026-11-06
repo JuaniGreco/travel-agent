@@ -27,6 +27,7 @@ def evaluate(
     tolerance: float = 400,
     suspicious_ratio: float = 0.5,
     historical_min: Optional[dict[str, float]] = None,
+    expedia_min_saving: float = 500.0,
 ) -> list[Alert]:
     historical_min = historical_min or {}
     alerts: list[Alert] = []
@@ -84,6 +85,17 @@ def evaluate(
                 "UPGRADE", g.label,
                 f"{g.upgrade_label}: {usd(upgrade)} ≤ base actual {usd(base)} → diferencia {usd(base - upgrade)} a favor",
                 suspicious(upgrade, base)))
+
+        # Regla 4: Expedia / OTA (alerta solo si el ahorro supera el umbral de $500 USD)
+        expedia = _ok(results, g.expedia_search)
+        if expedia is not None and base is not None:
+            ahorro = base - expedia
+            if ahorro >= expedia_min_saving:
+                alerts.append(Alert(
+                    "AHORRO EXPEDIA", f"{g.label} (Expedia)",
+                    f"Habitación cuádruple {usd(expedia)} vs base oficial {usd(base)} → "
+                    f"ahorro de {usd(ahorro)} (supera umbral de ${expedia_min_saving:,.0f} USD)",
+                    suspicious(expedia, base)))
 
     return alerts
 

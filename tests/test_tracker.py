@@ -107,6 +107,18 @@ class RulesTests(unittest.TestCase):
         alerts = self.run_rules([res("pop_quad", 400)])
         self.assertTrue(alerts[0].suspicious)
 
+    def test_expedia_saving_above_threshold(self):
+        # Base Pop Century es $2,406; Expedia a $1,800 ahorra $606 (> $500) -> alerta
+        alerts = self.run_rules([res("expedia_pop", 1800)])
+        self.assertEqual([a.kind for a in alerts], ["AHORRO EXPEDIA"])
+        self.assertIn("Expedia", alerts[0].target)
+        self.assertIn("$606", alerts[0].message)
+
+    def test_expedia_saving_below_threshold_ignored(self):
+        # Base Pop Century es $2,406; Expedia a $2,100 ahorra $306 (< $500) -> sin alerta
+        alerts = self.run_rules([res("expedia_pop", 2100)])
+        self.assertEqual(alerts, [])
+
 
 class LogbookTests(unittest.TestCase):
     def test_write_newest_first_and_history(self):

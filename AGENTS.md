@@ -49,6 +49,7 @@ Comparar precios obtenidos vs presupuesto base y escribir en el Markdown si se c
 1. **Ahorro directo:** precio de 1 habitación cuádruple (4 adultos) < presupuesto base.
 2. **Privacidad (2 habitaciones):** 2 × habitación doble (2 adultos) ≤ presupuesto base + USD 400 de tolerancia.
 3. **Upgrade:** precio del hotel de categoría superior (4 adultos) ≤ presupuesto base del hotel actual.
+4. **Expedia / OTA:** precio en Expedia ≤ presupuesto base - USD 500 (alerta únicamente si el ahorro supera los $500 USD para justificar salir del agente de viajes oficial y sus beneficios).
 - Auto: alerta de ahorro si el total < USD 260 (y registro del nuevo mínimo).
 - Si un precio es < 50 % de la base se marca "⚠️ verificar" (posible precio por noche o sin impuestos).
 - Los presupuestos se asumen **con impuestos** (Orange County ≈ 12.5 %: 6.5 % sales + 6 % tourist tax).

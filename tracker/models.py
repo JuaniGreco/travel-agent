@@ -54,7 +54,7 @@ class Search:
 
 @dataclass
 class HotelGroup:
-    """Hotel actual + búsquedas asociadas para aplicar las 3 reglas."""
+    """Hotel actual + búsquedas asociadas para aplicar las reglas."""
 
     id: str
     label: str
@@ -63,6 +63,7 @@ class HotelGroup:
     double_search: Optional[str] = None  # 1 habitación, 2 adultos (se multiplica x2)
     upgrade_search: Optional[str] = None
     upgrade_label: str = ""
+    expedia_search: Optional[str] = None
 
 
 @dataclass

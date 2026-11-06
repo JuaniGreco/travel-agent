@@ -22,6 +22,7 @@ BASE_AVIS_SUV = get_float("AVIS_SUV_BASE_USD", 260.0)
 # --- Reglas -----------------------------------------------------------------
 TOLERANCIA_PRIVACIDAD_USD = get_float("TOLERANCIA_PRIVACIDAD_USD", 400.0)
 UMBRAL_SOSPECHOSO = get_float("UMBRAL_SOSPECHOSO", 0.5)
+EXPEDIA_MIN_AHORRO_USD = get_float("EXPEDIA_MIN_AHORRO_USD", 500.0)
 
 # Impuestos Orange County (Universal y Disney): 6.5 % sales + 6 % tourist development tax
 TAX_ORLANDO = get_float("TAX_ORLANDO", 0.125)
@@ -41,6 +42,7 @@ CLEAR_COOKIES_EACH_RUN = get_bool("CLEAR_COOKIES_EACH_RUN", True)
 URLS_AVIS = [r"avis\.com/"]
 URLS_UNIVERSAL = [r"universalorlando\.com/", r"loewshotels\.com/"]
 URLS_DISNEY = [r"disney\.go\.com/", r"wdpromedia|disney\.com/"]
+URLS_EXPEDIA = [r"expedia\.com/"]
 
 START_AVIS = "https://www.avis.com/en/home"
 START_UNIVERSAL = "https://www.universalorlando.com/web/en/us/places-to-stay"
@@ -130,18 +132,52 @@ SEARCHES: list[Search] = [
         offer_keywords=[r"preferred"], exclude_keywords=[r"suite", r"under the sea", r"standard"],
         adults=4, **_POP, **_HOTEL_TAX,
     ),
+    # 3. Comparativas en Expedia (solo alertan si el ahorro supera los USD 500)
+    Search(
+        id="expedia_cabana", site="expedia", kind="hotel",
+        label="Expedia · Cabana Bay · Poolside 2 Queen · 4 adultos",
+        property_name="Universal's Cabana Bay Beach Resort",
+        start_url="https://www.expedia.com/Hotel-Search?destination=Universal's%20Cabana%20Bay%20Beach%20Resort&startDate=2027-05-03&endDate=2027-05-06&adults=4",
+        url_patterns=URLS_EXPEDIA,
+        offer_keywords=[r"poolside", r"pool view", r"standard", r"queen", r"courtyard"],
+        exclude_keywords=[r"suite"],
+        adults=4, **_CABANA, **_HOTEL_TAX,
+    ),
+    Search(
+        id="expedia_hardrock", site="expedia", kind="hotel",
+        label="Expedia · Hard Rock Hotel · Standard 2 Queen · 4 adultos",
+        property_name="Hard Rock Hotel at Universal Orlando",
+        start_url="https://www.expedia.com/Hotel-Search?destination=Hard%20Rock%20Hotel%20at%20Universal%20Orlando&startDate=2027-05-06&endDate=2027-05-08&adults=4",
+        url_patterns=URLS_EXPEDIA,
+        offer_keywords=[r"(2|two|double)\s*queen"],
+        exclude_keywords=[r"suite", r"club", r"king"],
+        adults=4, **_HARDROCK, **_HOTEL_TAX,
+    ),
+    Search(
+        id="expedia_pop", site="expedia", kind="hotel",
+        label="Expedia · Pop Century · Preferred · 4 adultos",
+        property_name="Disney's Pop Century Resort",
+        start_url="https://www.expedia.com/Hotel-Search?destination=Disney's%20Pop%20Century%20Resort&startDate=2027-05-08&endDate=2027-05-14&adults=4",
+        url_patterns=URLS_EXPEDIA,
+        offer_keywords=[r"preferred"],
+        exclude_keywords=[r"suite", r"under the sea", r"standard"],
+        adults=4, **_POP, **_HOTEL_TAX,
+    ),
 ]
 
 # --- Reglas de negocio --------------------------------------------------------
 HOTEL_GROUPS: list[HotelGroup] = [
     HotelGroup(id="cabana_bay", label="Universal's Cabana Bay (03→06/05)", base_usd=BASE_CABANA,
                quad_search="cabana_quad", double_search="cabana_doble",
-               upgrade_search="sapphire_quad", upgrade_label="Loews Sapphire Falls"),
+               upgrade_search="sapphire_quad", upgrade_label="Loews Sapphire Falls",
+               expedia_search="expedia_cabana"),
     HotelGroup(id="hard_rock", label="Hard Rock Hotel (06→08/05)", base_usd=BASE_HARDROCK,
-               quad_search="hardrock_quad", double_search="hardrock_doble"),
+               quad_search="hardrock_quad", double_search="hardrock_doble",
+               expedia_search="expedia_hardrock"),
     HotelGroup(id="pop_century", label="Disney's Pop Century (08→14/05)", base_usd=BASE_POP,
                quad_search="pop_quad", double_search="pop_doble",
-               upgrade_search="caribbean_quad", upgrade_label="Disney's Caribbean Beach (Preferred Room)"),
+               upgrade_search="caribbean_quad", upgrade_label="Disney's Caribbean Beach (Preferred Room)",
+               expedia_search="expedia_pop"),
 ]
 
 CAR_RULES: list[CarRule] = [
