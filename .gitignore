@@ -1,7 +1,18 @@
+# Entorno virtual y Python
 .venv/
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+
+# Variables de entorno y credenciales (Ciberseguridad: NUNCA commitear .env)
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Datos de navegador y capturas locales
 .browser_profile/
 capturas/
 logs/
-
+data/*.csv

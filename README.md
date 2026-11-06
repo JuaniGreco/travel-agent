@@ -3,13 +3,18 @@
 Monitorea 2 veces por día los precios del auto (Avis) y los hoteles de Orlando, los compara contra lo ya pagado
 y escribe alertas en [`bitacora_precios.md`](bitacora_precios.md). Contexto completo y reglas: [`AGENTS.md`](AGENTS.md).
 
-## 1. Instalación (Windows)
+## 1. Instalación y Configuración (Windows)
 ```powershell
 cd C:\ruta\travel-agent
 py -3 -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
 playwright install chromium      # respaldo si no tenés Google Chrome instalado
+
+# Crear archivo de configuración local a partir de la plantilla
+copy .env.example .env
+# (Editar .env con tus presupuestos base y ajustes)
+
 python main.py list
 ```
 

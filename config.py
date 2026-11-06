@@ -1,28 +1,40 @@
 """Configuración del Tracker de Precios Florida 2027.
 
-Toda la información de negocio (fechas, presupuestos, reglas) vive acá.
+Toda la información de negocio y parámetros se carga desde variables de entorno (.env)
+con valores por defecto seguros.
 Ver AGENTS.md para el contexto completo.
 """
 from datetime import date, datetime
 
+from tracker.env import get_bool, get_float, get_int, get_str, load_env
 from tracker.models import CarRule, HotelGroup, Search
 
-TRIP_NAME = "Florida 2027"
+load_env()
+
+TRIP_NAME = get_str("TRIP_NAME", "Florida 2027")
+
+# --- Presupuestos Base Pagados / de Referencia (USD) -------------------------
+BASE_CABANA = get_float("CABANA_BAY_BASE_USD", 1174.0)
+BASE_HARDROCK = get_float("HARD_ROCK_BASE_USD", None)
+BASE_POP = get_float("POP_CENTURY_BASE_USD", 2406.0)
+BASE_AVIS_SUV = get_float("AVIS_SUV_BASE_USD", 260.0)
 
 # --- Reglas -----------------------------------------------------------------
-TOLERANCIA_PRIVACIDAD_USD = 400      # regla 2: 2 habitaciones <= base + tolerancia
-UMBRAL_SOSPECHOSO = 0.5              # precio < 50 % de la base => "verificar"
+TOLERANCIA_PRIVACIDAD_USD = get_float("TOLERANCIA_PRIVACIDAD_USD", 400.0)
+UMBRAL_SOSPECHOSO = get_float("UMBRAL_SOSPECHOSO", 0.5)
 
 # Impuestos Orange County (Universal y Disney): 6.5 % sales + 6 % tourist development tax
-TAX_ORLANDO = 0.125
+TAX_ORLANDO = get_float("TAX_ORLANDO", 0.125)
 
 # --- Navegador / anti-bot ---------------------------------------------------
-HEADLESS = False              # visible = menos detección. Task Scheduler debe correr con sesión iniciada.
-BROWSER_CHANNEL = "chrome"    # usa Google Chrome instalado; None => Chromium de Playwright
-TIMEOUT_BUSQUEDA_S = 90       # máximo a esperar payloads con precios por búsqueda
-SETTLE_S = 4                  # segundos sin payloads nuevos para dar la búsqueda por terminada
-PAUSA_ENTRE_BUSQUEDAS_S = (8, 25)  # pausa aleatoria entre búsquedas
-GUARDAR_PAYLOADS = True       # guarda los JSON de la última ejecución en capturas/ultima/
+HEADLESS = get_bool("BROWSER_HEADLESS", False)
+BROWSER_CHANNEL = get_str("BROWSER_CHANNEL", "chrome") or None
+TIMEOUT_BUSQUEDA_S = get_int("SEARCH_TIMEOUT_SECONDS", 90)
+SETTLE_S = get_int("SEARCH_SETTLE_SECONDS", 4)
+PAUSA_MIN = get_int("PAUSE_BETWEEN_SEARCHES_MIN", 8)
+PAUSA_MAX = get_int("PAUSE_BETWEEN_SEARCHES_MAX", 25)
+PAUSA_ENTRE_BUSQUEDAS_S = (PAUSA_MIN, PAUSA_MAX)
+GUARDAR_PAYLOADS = get_bool("GUARDAR_PAYLOADS", True)
 
 # --- Patrones de URL de APIs internas (ajustar tras `python main.py discover`) ---
 URLS_AVIS = [r"avis\.com/"]
@@ -117,17 +129,16 @@ SEARCHES: list[Search] = [
 
 # --- Reglas de negocio --------------------------------------------------------
 HOTEL_GROUPS: list[HotelGroup] = [
-    HotelGroup(id="cabana_bay", label="Universal's Cabana Bay (03→06/05)", base_usd=1174,
+    HotelGroup(id="cabana_bay", label="Universal's Cabana Bay (03→06/05)", base_usd=BASE_CABANA,
                quad_search="cabana_quad", double_search="cabana_doble",
                upgrade_search="sapphire_quad", upgrade_label="Loews Sapphire Falls"),
-    HotelGroup(id="hard_rock", label="Hard Rock Hotel (06→08/05)", base_usd=None,  # TODO: completar si ya está pago
+    HotelGroup(id="hard_rock", label="Hard Rock Hotel (06→08/05)", base_usd=BASE_HARDROCK,
                quad_search="hardrock_quad", double_search="hardrock_doble"),
-    HotelGroup(id="pop_century", label="Disney's Pop Century (08→14/05)", base_usd=2406,
+    HotelGroup(id="pop_century", label="Disney's Pop Century (08→14/05)", base_usd=BASE_POP,
                quad_search="pop_quad", double_search="pop_doble",
                upgrade_search="caribbean_quad", upgrade_label="Disney's Caribbean Beach"),
 ]
 
 CAR_RULES: list[CarRule] = [
-    CarRule(search="avis_suv", label="Avis Full-Size SUV (MIA → U2S)", base_usd=260),
+    CarRule(search="avis_suv", label="Avis Full-Size SUV (MIA → U2S)", base_usd=BASE_AVIS_SUV),
 ]
-

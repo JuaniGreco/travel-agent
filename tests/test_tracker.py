@@ -7,6 +7,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 import config  # noqa: E402
+from tracker.env import get_bool, get_float, get_int, get_str, load_env  # noqa: E402
 from tracker.extractor import iter_offers, offer_total, select_best  # noqa: E402
 from tracker.interceptor import CapturedPayload  # noqa: E402
 from tracker.logbook import append_history, historical_min, render_entry, write_logbook  # noqa: E402
@@ -118,6 +119,29 @@ class LogbookTests(unittest.TestCase):
     @staticmethod
     def run_alerts(results):
         return evaluate(results, config.HOTEL_GROUPS, config.CAR_RULES)
+
+
+class EnvTests(unittest.TestCase):
+    def test_native_parser_and_getters(self):
+        import os
+        with tempfile.TemporaryDirectory() as d:
+            test_env = Path(d) / ".env.test"
+            test_env.write_text(
+                "# Comentario\n"
+                "TEST_STR=\"Florida 2027\"\n"
+                "TEST_FLOAT=123.45\n"
+                "TEST_INT=42\n"
+                "TEST_BOOL=true\n"
+                "TEST_EMPTY=\n",
+                encoding="utf-8",
+            )
+            load_env(test_env)
+            self.assertEqual(get_str("TEST_STR"), "Florida 2027")
+            self.assertEqual(get_float("TEST_FLOAT"), 123.45)
+            self.assertEqual(get_int("TEST_INT"), 42)
+            self.assertTrue(get_bool("TEST_BOOL"))
+            self.assertEqual(get_str("TEST_EMPTY", "default"), "default")
+            self.assertIsNone(get_float("TEST_NON_EXISTENT"))
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 # Contexto del Proyecto: Tracker de Precios Florida 2027
 
 > Este archivo es la fuente de verdad del proyecto para cualquier agente/IA que trabaje en el repo.
-> Si cambian fechas, presupuestos o reglas, actualizar **acá y en `config.py`**.
+> Si cambian fechas, presupuestos o reglas, actualizar **acá, en `.env.example` y en `.env`**.
 
 ## Objetivo principal
 Script automatizado en Python que monitorea **2 veces al día** los precios de hoteles y alquiler de autos
@@ -48,7 +48,9 @@ Comparar precios obtenidos vs presupuesto base y escribir en el Markdown si se c
 ## Arquitectura
 ```
 main.py                 CLI: run | discover | analyze | list
-config.py               Parámetros del viaje, presupuestos, búsquedas y patrones de URL
+config.py               Parámetros del viaje, búsquedas y lectura de variables de entorno
+.env.example / .env     Configuración local segura (presupuestos, tolerancias, flags)
+tracker/env.py          Cargador seguro de variables de entorno con fallback nativo
 tracker/models.py       Dataclasses (Search, HotelGroup, CarRule, Offer, SearchResult, Alert)
 tracker/interceptor.py  JsonInterceptor -> page.on("response") captura JSON de fetch/xhr
 tracker/extractor.py    Extracción heurística de ofertas (label + precio) desde JSON arbitrario
@@ -76,7 +78,7 @@ y las APIs internas cambian. Por eso hay dos pasos manuales por sitio, hechos un
 
 ## Convenciones y flujo de trabajo (Git & Issues)
 - Idioma de UI/bitácora/comentarios: español rioplatense. Montos en USD.
-- No commitear `.browser_profile/`, `capturas/`, `logs/`, `.venv/`.
+- No commitear `.env`, `.browser_profile/`, `capturas/`, `logs/`, `.venv/`. Mantener sincronizado `.env.example`.
 - Correr tests: `python -m unittest discover -s tests`.
 - **Commits y Push frecuentes:** Realizar commits y push de manera periódica ante cada hito, refactor o avance significativo para no perder el progreso y mantener el historial sincronizado y seguro.
 - **Creación y seguimiento de Issues:** Crear y gestionar los issues necesarios (en GitHub o registro de tareas) para desglosar funcionalidades, calibraciones pendientes, bugs o mejoras, estructurando así el trabajo colaborativo en el desarrollo del agente.
