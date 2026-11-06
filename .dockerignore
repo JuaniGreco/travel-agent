@@ -1,0 +1,18 @@
+.git
+.gitignore
+.venv
+__pycache__
+*.py[cod]
+*$py.class
+
+# Excluir datos y secretos locales de la imagen (se montan como volúmenes en runtime)
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+.browser_profile/
+capturas/
+logs/
+data/

@@ -69,7 +69,9 @@ tracker/logbook.py      bitacora_precios.md (más nuevo arriba) + data/historial
 tracker/notifier.py     Despacho de alertas instantáneas (Telegram bot y Discord webhook)
 tracker/browser.py      Contexto persistente de Playwright con higiene de cookies anti-rastreo
 tracker/runner.py       Orquestación: flujo de navegación + espera de payloads + extracción
-flows/{avis,universal,disney}.py  Navegación (grabada con `playwright codegen`), sin lectura de datos
+flows/{avis,universal,disney,expedia}.py  Navegación interactiva, sin lectura de datos en el DOM
+Dockerfile / compose    Contenedorización basada en Microsoft Playwright Python
+run_docker.bat / .sh    Ejecución del contenedor con volúmenes montados
 run_tracker.bat / install_task.ps1  Despliegue en Windows Task Scheduler (09:00 y 21:00 ± 20 min)
 tests/                  Tests unitarios (unittest) de extractor, reglas y bitácora
 ```

@@ -1,0 +1,20 @@
+services:
+  travel-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: florida-travel-agent
+    env_file:
+      - .env
+    environment:
+      # En entornos de contenedor se recomienda headless salvo que se configure display X11
+      - BROWSER_HEADLESS=true
+    volumes:
+      # Archivos y carpetas persistentes montadas desde el host
+      - ./bitacora_precios.md:/app/bitacora_precios.md
+      - ./data:/app/data
+      - ./capturas:/app/capturas
+      - ./logs:/app/logs
+      - ./.browser_profile:/app/.browser_profile
+    # Permite pasar argumentos al entrypoint, ej: docker compose run --rm travel-agent run --only avis_suv
+    restart: "no"

@@ -41,3 +41,4 @@ def pasos_grabados(page, s: Search) -> None:
             raise
         # En Expedia, la búsqueda ya viene en la start_url; un error de scroll no es crítico
         logger.debug(f"Aviso durante navegación de Expedia: {exc}")
+

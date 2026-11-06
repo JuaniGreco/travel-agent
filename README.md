@@ -64,6 +64,29 @@ La PC debe estar encendida y con sesión iniciada (el navegador corre visible co
 | `capturas/ultima/<id>/` | JSON capturados en la última ejecución (diagnóstico) |
 | `capturas/errores/<id>.png` | Captura de pantalla si falló la navegación |
 
+## 4. Ejecución con Docker (Aislado y Prolijo)
+Podés ejecutar el tracker completamente dentro de un contenedor Docker sin necesidad de instalar Python ni navegadores en tu sistema host:
+
+```bash
+# 1. Crear el archivo .env local si aún no lo hiciste
+copy .env.example .env    # en Windows (o 'cp .env.example .env' en Linux/macOS)
+
+# 2. Construir la imagen con Playwright
+docker compose build
+
+# 3. Listar búsquedas configuradas
+docker compose run --rm travel-agent list
+
+# 4. Probar alerta a Telegram
+docker compose run --rm travel-agent notify-test
+
+# 5. Ejecutar una pasada completa
+docker compose run --rm travel-agent run
+```
+Todos los archivos generados (`bitacora_precios.md`, `data/historial_precios.csv`, `logs/`, `capturas/`) se sincronizan y persisten automáticamente en tu computadora gracias a los volúmenes configurados en `docker-compose.yml`.
+
+También podés automatizar la ejecución vía Docker usando `run_docker.bat` (en Windows Task Scheduler) o `run_docker.sh` (en Linux cron).
+
 ## Tests
 ```powershell
 python -m unittest discover -s tests
