@@ -73,3 +73,4 @@ def get_bool(key: str, default: bool = False) -> bool:
     if val is None or val.strip() == "":
         return default
     return val.strip().lower() in ("true", "1", "yes", "si", "on")
+

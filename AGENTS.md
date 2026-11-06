@@ -24,26 +24,28 @@ y registra historial + alertas en `bitacora_precios.md` (y `data/historial_preci
 ### 1. Alquiler de auto (Avis)
 - **Vehículo:** Full-Size SUV (Chevrolet Suburban, Ford Expedition o similar).
 - **Pick-up:** Aeropuerto de Miami (MIA) – 3 de mayo de 2027, 07:00.
-- **Drop-off:** Cabana Bay Beach Resort, Orlando (código Avis **U2S**, 6550 Adventure Way) – 3 de mayo de 2027, 16:00.
-- **Referencia base:** ~USD 260.
+- **Drop-off:** Cabana Bay Beach Resort, Orlando (código Avis **U2S**, 6550 Adventure Way) – 3 de mayo de 2027, 16:00 (devolución fuera de hora si el mostrador cerró).
+- **Referencia base:** ~USD 260 (sin reserva previa aún; se busca el menor precio).
 
 ### 2. Hoteles en Orlando (4 adultos) – tarifa **Room Only** (sin tickets)
 
-| Hotel | Check-in | Check-out | Habitación | Base pagada | Upgrade a evaluar |
-|---|---|---|---|---|---|
-| A. Universal's Cabana Bay Beach Resort | 2027-05-03 | 2027-05-06 | Standard | ~USD 1,174 | Loews Sapphire Falls Resort |
-| B. Hard Rock Hotel (Universal) | 2027-05-06 | 2027-05-08 | Standard 2 Queen Beds | *(sin dato – completar en `config.py`)* | – |
-| C. Disney's Pop Century Resort | 2027-05-08 | 2027-05-14 | Preferred Room | ~USD 2,406 | Disney's Caribbean Beach Resort |
+| Hotel | Check-in | Check-out | Habitación | Base pagada (Room Only) | Factura paquete total | Upgrade a evaluar |
+|---|---|---|---|---|---|---|
+| A. Universal's Cabana Bay Beach Resort | 2027-05-03 | 2027-05-06 | Poolside 2 Queen Beds | ~USD 1,174.14 | USD 3,174.14 (inc. 4D PTP + Volcano Bay) | Loews Sapphire Falls Resort |
+| B. Hard Rock Hotel (Universal) | 2027-05-06 | 2027-05-08 | Standard 2 Queen Beds | USD 2,125.15 | USD 2,125.15 (inc. Unlimited Express Pass) | – |
+| C. Disney's Pop Century Resort | 2027-05-08 | 2027-05-14 | Preferred Room | ~USD 2,406.00 | USD 4,566.57 (inc. 4-Day Tickets) | Disney's Caribbean Beach Resort |
+
+> **Nota sobre gestión con agente de viajes:** Las reservas de Disney y Universal se gestionan vía agente de viajes oficial (sin costo directo para el usuario). Cuando el tracker detecte una baja de tarifa oficial (ej. Black Friday), el usuario le pide a su agente que re-aplique la cotización a la reserva existente para obtener la devolución/ajuste.
 
 ## Reglas de decisión (por cada ejecución)
 Comparar precios obtenidos vs presupuesto base y escribir en el Markdown si se cumple:
 1. **Ahorro directo:** precio de 1 habitación cuádruple (4 adultos) < presupuesto base.
 2. **Privacidad (2 habitaciones):** 2 × habitación doble (2 adultos) ≤ presupuesto base + USD 400 de tolerancia.
 3. **Upgrade:** precio del hotel de categoría superior (4 adultos) ≤ presupuesto base del hotel actual.
-- Auto: alerta de ahorro si el total < USD 260.
-- Si un hotel no tiene base (Hard Rock): regla 1 = nuevo mínimo histórico; regla 2 usa como base el precio actual de 1 habitación.
+- Auto: alerta de ahorro si el total < USD 260 (y registro del nuevo mínimo).
 - Si un precio es < 50 % de la base se marca "⚠️ verificar" (posible precio por noche o sin impuestos).
 - Los presupuestos se asumen **con impuestos** (Orange County ≈ 12.5 %: 6.5 % sales + 6 % tourist tax).
+- Notificaciones instantáneas enviadas por **Telegram** (y Discord si está configurado).
 
 ## Arquitectura
 ```
@@ -56,7 +58,8 @@ tracker/interceptor.py  JsonInterceptor -> page.on("response") captura JSON de f
 tracker/extractor.py    Extracción heurística de ofertas (label + precio) desde JSON arbitrario
 tracker/rules.py        Reglas de decisión -> alertas
 tracker/logbook.py      bitacora_precios.md (más nuevo arriba) + data/historial_precios.csv
-tracker/browser.py      Contexto persistente de Playwright
+tracker/notifier.py     Despacho de alertas instantáneas (Telegram bot y Discord webhook)
+tracker/browser.py      Contexto persistente de Playwright con higiene de cookies anti-rastreo
 tracker/runner.py       Orquestación: flujo de navegación + espera de payloads + extracción
 flows/{avis,universal,disney}.py  Navegación (grabada con `playwright codegen`), sin lectura de datos
 run_tracker.bat / install_task.ps1  Despliegue en Windows Task Scheduler (09:00 y 21:00 ± 20 min)

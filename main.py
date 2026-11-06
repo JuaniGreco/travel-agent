@@ -52,7 +52,8 @@ def cmd_run(args) -> int:
     headless = config.HEADLESS if args.headless is None else args.headless
     results = {}
     with sync_playwright() as p:
-        context = open_context(p, headless=headless, channel=config.BROWSER_CHANNEL)
+        context = open_context(p, headless=headless, channel=config.BROWSER_CHANNEL,
+                               clean_cookies=config.CLEAR_COOKIES_EACH_RUN)
         try:
             for n, s in enumerate(selected):
                 if n:
@@ -76,6 +77,15 @@ def cmd_run(args) -> int:
     print(f"\n{len(alerts)} alerta(s). Bitácora actualizada: {LOGBOOK}")
     for a in alerts:
         print(f"  🚨 [{a.kind}] {a.target}: {a.message}")
+
+    if alerts:
+        from tracker.notifier import dispatch_alerts
+        dispatched = dispatch_alerts(alerts, config.TRIP_NAME)
+        for ch, ok in dispatched.items():
+            if ok:
+                print(f"  📲 Alerta enviada a {ch.capitalize()}.")
+            else:
+                print(f"  ⚠️ Error al enviar alerta a {ch.capitalize()} (revisar credenciales en .env).")
     return 0
 
 
@@ -168,6 +178,25 @@ def cmd_list(_args) -> int:
     return 0
 
 
+def cmd_notify_test(_args) -> int:
+    from tracker.models import Alert
+    from tracker.notifier import dispatch_alerts
+
+    mock_alert = Alert(
+        kind="AHORRO DIRECTO",
+        target="Universal's Cabana Bay (Prueba)",
+        message="Total $1,050 vs base $1,174 → ahorro $124",
+    )
+    print(f"Enviando alerta de prueba para '{config.TRIP_NAME}' a los canales configurados...")
+    res = dispatch_alerts([mock_alert], config.TRIP_NAME)
+    if not res:
+        print("⚠️ No hay canales configurados. Completá TELEGRAM_BOT_TOKEN y TELEGRAM_CHAT_ID (o DISCORD_WEBHOOK_URL) en .env")
+        return 1
+    for ch, ok in res.items():
+        print(f"  - {ch.capitalize()}: {'✅ Enviado exitosamente' if ok else '❌ Falló el envío'}")
+    return 0
+
+
 def main(argv=None) -> int:
     try:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # consola Windows
@@ -193,6 +222,7 @@ def main(argv=None) -> int:
     a.set_defaults(func=cmd_analyze)
 
     sub.add_parser("list", help="lista búsquedas").set_defaults(func=cmd_list)
+    sub.add_parser("notify-test", help="envía una alerta de prueba a Telegram/Discord").set_defaults(func=cmd_notify_test)
 
     args = ap.parse_args(argv)
     return args.func(args)

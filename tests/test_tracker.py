@@ -11,7 +11,8 @@ from tracker.env import get_bool, get_float, get_int, get_str, load_env  # noqa:
 from tracker.extractor import iter_offers, offer_total, select_best  # noqa: E402
 from tracker.interceptor import CapturedPayload  # noqa: E402
 from tracker.logbook import append_history, historical_min, render_entry, write_logbook  # noqa: E402
-from tracker.models import Offer, SearchResult  # noqa: E402
+from tracker.models import Alert, Offer, SearchResult  # noqa: E402
+from tracker.notifier import dispatch_alerts, send_discord, send_telegram  # noqa: E402
 from tracker.rules import evaluate  # noqa: E402
 
 S = {s.id: s for s in config.SEARCHES}
@@ -89,9 +90,17 @@ class RulesTests(unittest.TestCase):
         alerts = self.run_rules([res("avis_suv", 240)])
         self.assertEqual([a.kind for a in alerts], ["AHORRO DIRECTO"])
 
-    def test_hardrock_without_base(self):
-        alerts = self.run_rules([res("hardrock_quad", 900), res("hardrock_doble", 600)],
-                                hist={"hardrock_quad": 950})
+    def test_hardrock_with_base(self):
+        # Con base configurada ($2,125.15), si baja a $900 genera ahorro directo
+        alerts = self.run_rules([res("hardrock_quad", 900), res("hardrock_doble", 600)])
+        self.assertEqual(sorted(a.kind for a in alerts), ["AHORRO DIRECTO", "PRIVACIDAD"])
+
+    def test_hotel_without_base_triggers_historical_min(self):
+        # Si un hotel no tuviera base, dispara MÍNIMO HISTÓRICO
+        group_no_base = [config.HotelGroup(id="custom", label="Custom Hotel", base_usd=None,
+                                            quad_search="custom_quad", double_search="custom_doble")]
+        res_map = {"custom_quad": res("custom_quad", 800), "custom_doble": res("custom_doble", 500)}
+        alerts = evaluate(res_map, group_no_base, [], historical_min={"custom_quad": 900})
         self.assertEqual(sorted(a.kind for a in alerts), ["MÍNIMO HISTÓRICO", "PRIVACIDAD"])
 
     def test_suspicious_flag(self):
@@ -142,6 +151,33 @@ class EnvTests(unittest.TestCase):
             self.assertTrue(get_bool("TEST_BOOL"))
             self.assertEqual(get_str("TEST_EMPTY", "default"), "default")
             self.assertIsNone(get_float("TEST_NON_EXISTENT"))
+
+
+class NotifierTests(unittest.TestCase):
+    def test_dispatch_empty_alerts(self):
+        self.assertEqual(dispatch_alerts([], "Florida 2027"), {})
+
+    def test_discord_formatting(self):
+        from unittest.mock import patch
+        alert = Alert("AHORRO DIRECTO", "Pop Century", "Ahorro $200")
+        with patch("tracker.notifier._post_json", return_value=True) as mock_post:
+            ok = send_discord("https://discord.com/api/webhooks/dummy", [alert], "Florida 2027")
+            self.assertTrue(ok)
+            mock_post.assert_called_once()
+            payload = mock_post.call_args[0][1]
+            self.assertIn("embeds", payload)
+            self.assertIn("Ahorro $200", payload["embeds"][0]["fields"][0]["value"])
+
+    def test_telegram_formatting(self):
+        from unittest.mock import patch
+        alert = Alert("UPGRADE", "Cabana Bay", "Upgrade a Sapphire Falls")
+        with patch("tracker.notifier._post_json", return_value=True) as mock_post:
+            ok = send_telegram("123456:ABC-DEF", "987654321", [alert], "Florida 2027")
+            self.assertTrue(ok)
+            mock_post.assert_called_once()
+            payload = mock_post.call_args[0][1]
+            self.assertEqual(payload["chat_id"], "987654321")
+            self.assertIn("Sapphire Falls", payload["text"])
 
 
 if __name__ == "__main__":

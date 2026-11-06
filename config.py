@@ -14,8 +14,8 @@ load_env()
 TRIP_NAME = get_str("TRIP_NAME", "Florida 2027")
 
 # --- Presupuestos Base Pagados / de Referencia (USD) -------------------------
-BASE_CABANA = get_float("CABANA_BAY_BASE_USD", 1174.0)
-BASE_HARDROCK = get_float("HARD_ROCK_BASE_USD", None)
+BASE_CABANA = get_float("CABANA_BAY_BASE_USD", 1174.14)
+BASE_HARDROCK = get_float("HARD_ROCK_BASE_USD", 2125.15)
 BASE_POP = get_float("POP_CENTURY_BASE_USD", 2406.0)
 BASE_AVIS_SUV = get_float("AVIS_SUV_BASE_USD", 260.0)
 
@@ -26,7 +26,7 @@ UMBRAL_SOSPECHOSO = get_float("UMBRAL_SOSPECHOSO", 0.5)
 # Impuestos Orange County (Universal y Disney): 6.5 % sales + 6 % tourist development tax
 TAX_ORLANDO = get_float("TAX_ORLANDO", 0.125)
 
-# --- Navegador / anti-bot ---------------------------------------------------
+# --- Navegador / anti-bot / anti-rastreo -----------------------------------
 HEADLESS = get_bool("BROWSER_HEADLESS", False)
 BROWSER_CHANNEL = get_str("BROWSER_CHANNEL", "chrome") or None
 TIMEOUT_BUSQUEDA_S = get_int("SEARCH_TIMEOUT_SECONDS", 90)
@@ -35,6 +35,7 @@ PAUSA_MIN = get_int("PAUSE_BETWEEN_SEARCHES_MIN", 8)
 PAUSA_MAX = get_int("PAUSE_BETWEEN_SEARCHES_MAX", 25)
 PAUSA_ENTRE_BUSQUEDAS_S = (PAUSA_MIN, PAUSA_MAX)
 GUARDAR_PAYLOADS = get_bool("GUARDAR_PAYLOADS", True)
+CLEAR_COOKIES_EACH_RUN = get_bool("CLEAR_COOKIES_EACH_RUN", True)
 
 # --- Patrones de URL de APIs internas (ajustar tras `python main.py discover`) ---
 URLS_AVIS = [r"avis\.com/"]
@@ -69,16 +70,16 @@ SEARCHES: list[Search] = [
     # 2A. Cabana Bay + upgrade Sapphire Falls
     Search(
         id="cabana_quad", site="universal", kind="hotel",
-        label="Cabana Bay · 1 hab. · 4 adultos", property_name="Universal's Cabana Bay Beach Resort",
+        label="Cabana Bay · Poolside 2 Queen · 4 adultos", property_name="Universal's Cabana Bay Beach Resort",
         start_url=START_UNIVERSAL, url_patterns=URLS_UNIVERSAL,
-        offer_keywords=[r"standard", r"queen", r"courtyard", r"pool view"], exclude_keywords=[r"suite"],
+        offer_keywords=[r"poolside", r"pool view", r"standard", r"queen", r"courtyard"], exclude_keywords=[r"suite"],
         adults=4, **_CABANA, **_HOTEL_TAX,
     ),
     Search(
         id="cabana_doble", site="universal", kind="hotel",
-        label="Cabana Bay · 1 hab. · 2 adultos", property_name="Universal's Cabana Bay Beach Resort",
+        label="Cabana Bay · Poolside 2 Queen · 2 adultos", property_name="Universal's Cabana Bay Beach Resort",
         start_url=START_UNIVERSAL, url_patterns=URLS_UNIVERSAL,
-        offer_keywords=[r"standard", r"queen", r"courtyard", r"pool view"], exclude_keywords=[r"suite"],
+        offer_keywords=[r"poolside", r"pool view", r"standard", r"queen", r"courtyard"], exclude_keywords=[r"suite"],
         adults=2, **_CABANA, **_HOTEL_TAX,
     ),
     Search(

@@ -39,12 +39,22 @@ Copiá los pasos generados dentro de `pasos_grabados()` en `flows/avis.py` (idem
 
 **c) Probar:** `python main.py run --only avis_suv` y revisar la bitácora.
 
-## 3. Programar 2 veces por día
+**d) Probar notificaciones Telegram:** `python main.py notify-test`
+
+## 3. Automatización (Windows Task Scheduler)
+Se programa desatendido con jitter aleatorio para no emitir patrones fijos:
+
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\install_task.ps1          # 09:00 y 21:00 (+0-20 min)
-Start-ScheduledTask -TaskName TrackerPreciosFlorida2027                # prueba inmediata
+# Pre-Black Friday: cada 4 horas (valor recomendado habitual)
+powershell -ExecutionPolicy Bypass -File .\install_task.ps1
+
+# Black Friday intensivo: cada 2 horas
+powershell -ExecutionPolicy Bypass -File .\install_task.ps1 -IntervalHours 2 -JitterMinutes 10
+
+# Prueba inmediata:
+Start-ScheduledTask -TaskName TrackerPreciosFlorida2027
 ```
-La PC debe estar encendida y con sesión iniciada (el navegador corre visible). Log: `logs\tracker.log`.
+La PC debe estar encendida y con sesión iniciada (el navegador corre visible con Chrome real). Log: `logs\tracker.log`.
 
 ## Archivos generados
 | Archivo | Contenido |
