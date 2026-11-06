@@ -22,7 +22,9 @@ y registra historial + alertas en `bitacora_precios.md` (y `data/historial_preci
 ## Entidades a monitorear
 
 ### 1. Alquiler de auto (Avis)
-- **Vehículo:** Full-Size SUV (Chevrolet Suburban, Ford Expedition o similar).
+- **Vehículo:** Full-Size SUV / Premium SUV (Chevrolet Suburban, Tahoe, Ford Expedition, GMC Yukon XL o similar).
+  - **Requisito físico:** Capacidad real para 4 adultos + 4 valijas grandes (28") en el baúl.
+  - **Exclusión obligatoria:** Prohibido Minivans / Vans / Traffics (Pacifica, Caravan, Transit, etc.).
 - **Pick-up:** Aeropuerto de Miami (MIA) – 3 de mayo de 2027, 07:00.
 - **Drop-off:** Cabana Bay Beach Resort, Orlando (código Avis **U2S**, 6550 Adventure Way) – 3 de mayo de 2027, 16:00 (devolución fuera de hora si el mostrador cerró).
 - **Referencia base:** ~USD 260 (sin reserva previa aún; se busca el menor precio).
@@ -33,7 +35,12 @@ y registra historial + alertas en `bitacora_precios.md` (y `data/historial_preci
 |---|---|---|---|---|---|---|
 | A. Universal's Cabana Bay Beach Resort | 2027-05-03 | 2027-05-06 | Poolside 2 Queen Beds | ~USD 1,174.14 | USD 3,174.14 (inc. 4D PTP + Volcano Bay) | Loews Sapphire Falls Resort |
 | B. Hard Rock Hotel (Universal) | 2027-05-06 | 2027-05-08 | Standard 2 Queen Beds | USD 2,125.15 | USD 2,125.15 (inc. Unlimited Express Pass) | – |
-| C. Disney's Pop Century Resort | 2027-05-08 | 2027-05-14 | Preferred Room | ~USD 2,406.00 | USD 4,566.57 (inc. 4-Day Tickets) | Disney's Caribbean Beach Resort |
+| C. Disney's Pop Century Resort | 2027-05-08 | 2027-05-14 | Preferred Room | ~USD 2,406.00 | USD 4,566.57 (inc. 4-Day Tickets) | Disney's Caribbean Beach Resort (Solo Preferred Room) |
+
+> **Criterio de disposición física y caminatas (Hoteles):**
+> - En Pop Century se paga Preferred para estar cerca del Classic Hall (lobby/comedor/buses) y del Skyliner.
+> - En el upgrade a Caribbean Beach Resort **SOLO se admite Preferred Room** (edificios Martinique y Barbados, al lado de Old Port Royale). No se aceptan Standard Rooms porque Caribbean Beach es enorme y caminar desde las aldeas alejadas (ej. Trinidad) toma 15-25 minutos.
+> - En Universal, Loews Sapphire Falls es un único edificio cerrado con pasillos interiores y transporte en barco (water taxi), eliminando caminatas largas bajo el calor.
 
 > **Nota sobre gestión con agente de viajes:** Las reservas de Disney y Universal se gestionan vía agente de viajes oficial (sin costo directo para el usuario). Cuando el tracker detecte una baja de tarifa oficial (ej. Black Friday), el usuario le pide a su agente que re-aplique la cotización a la reserva existente para obtener la devolución/ajuste.
 

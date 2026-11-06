@@ -113,3 +113,4 @@ def dispatch_alerts(
         results["telegram"] = send_telegram(telegram_token, telegram_chat, alerts, trip_name)
 
     return results
+

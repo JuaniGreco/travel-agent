@@ -62,7 +62,11 @@ SEARCHES: list[Search] = [
         id="avis_suv", site="avis", kind="car",
         label="Avis Full-Size SUV · MIA 03/05 07:00 → Cabana Bay (U2S) 03/05 16:00",
         start_url=START_AVIS, url_patterns=URLS_AVIS,
-        offer_keywords=SUV_KEYWORDS, exclude_keywords=[r"compact", r"mid[\s-]?size", r"standard\s*suv"],
+        offer_keywords=SUV_KEYWORDS,
+        exclude_keywords=[
+            r"van", r"minivan", r"transit", r"traffic", r"caravan", r"pacifica",
+            r"wagon", r"sedan", r"compact", r"mid[\s-]?size", r"standard\s*suv"
+        ],
         pickup_location="MIA", dropoff_location="U2S",
         pickup_at=datetime(2027, 5, 3, 7, 0), dropoff_at=datetime(2027, 5, 3, 16, 0),
         prices_include_tax=True,
@@ -121,9 +125,9 @@ SEARCHES: list[Search] = [
     ),
     Search(
         id="caribbean_quad", site="disney", kind="hotel",
-        label="Caribbean Beach · Standard · 4 adultos", property_name="Disney's Caribbean Beach Resort",
+        label="Caribbean Beach · Preferred Room · 4 adultos", property_name="Disney's Caribbean Beach Resort",
         start_url=START_DISNEY_CBR, url_patterns=URLS_DISNEY,
-        offer_keywords=[r"standard", r"preferred", r"view"], exclude_keywords=[r"suite"],
+        offer_keywords=[r"preferred"], exclude_keywords=[r"suite", r"under the sea", r"standard"],
         adults=4, **_POP, **_HOTEL_TAX,
     ),
 ]
@@ -137,7 +141,7 @@ HOTEL_GROUPS: list[HotelGroup] = [
                quad_search="hardrock_quad", double_search="hardrock_doble"),
     HotelGroup(id="pop_century", label="Disney's Pop Century (08→14/05)", base_usd=BASE_POP,
                quad_search="pop_quad", double_search="pop_doble",
-               upgrade_search="caribbean_quad", upgrade_label="Disney's Caribbean Beach"),
+               upgrade_search="caribbean_quad", upgrade_label="Disney's Caribbean Beach (Preferred Room)"),
 ]
 
 CAR_RULES: list[CarRule] = [
